@@ -4,7 +4,7 @@ import { PropsWithoutRef } from "react";
 import ClientContext from "../context/client";
 import { Post } from "@meower-media/meower/dist/api/posts";
 import { bridges, Packet } from "@meower-media/meower";
-import { ActivityIndicator, FlatList, FlatListComponent, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, FlatListComponent, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import PostElement from "./PostElement";
 import colors from "../Colors";
 
@@ -14,11 +14,71 @@ type SectionProps = {
 
 };
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: 10,
+    },
 
-function _PostList({ posts }: { posts: Array<Post> }): React.JSX.Element {
+    scroll: {
+        alignContent: "center",
+        justifyContent: "center",
+    },
+    input: {
+        borderColor: colors.orange,
+        borderWidth: 1,
+        borderStyle: "dotted",
+        borderRadius: 10,
+        marginLeft: "3%",
+        width: "70%",
+    },
+    inputButton: {
+        backgroundColor: colors.orange,
+        borderRadius: 10,
+        padding: 10,
+        marginLeft: 10,
+        flexGrow: 1,
+        alignContent: "center",
+        justifyContent: "center",
+        marginRight: "3%",
+    },
+});
+
+function _PostList({ posts, chat }: { posts: Array<Post>, chat: string }): React.JSX.Element {
+    const [error, setError] = useState<string | null>(null);
+    const [input, setInput] = useState<string>("");
+    
+    const client = React.useContext(ClientContext);
+
     return (
-        <View>
-            <ScrollView>
+        <View >
+            <ScrollView contentContainerStyle={styles.scroll}>
+                <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                <TextInput value={input} onChange={
+                    (e) => {
+                        setError(null);
+                        setInput(e.nativeEvent.text);
+                    }
+
+                } placeholder="Type a message" multiline style={styles.input}/><TouchableOpacity onPress={
+                    async () => {
+                        if (!client.user) {
+                            setError("You must be logged in to post")
+                            return;
+                        }
+                        if (!input) {
+                            setError("You must type a message to post")
+                            return;
+                        }
+
+                        await client.post(input, chat);
+                        setInput("");
+
+                    }
+                
+                } style={styles.inputButton}><Text> Post </Text></TouchableOpacity>
+                </View>
+                {error ? <Text style={{color: "#FF0000", marginLeft: "3%", marginRight: "3%"}}>{error}</Text> : <View />}
                 {posts.map((post) => {
                     return <PostElement post={post} key={post._id} />
                 })}
@@ -27,12 +87,7 @@ function _PostList({ posts }: { posts: Array<Post> }): React.JSX.Element {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: 10,
-    }
-});
+
 
 
 export default function PostList({ chat }: SectionProps): React.JSX.Element {
@@ -92,7 +147,7 @@ export default function PostList({ chat }: SectionProps): React.JSX.Element {
 
     return (
         <View style={styles.container}>
-            {posts ? <_PostList posts={posts} /> : <View style={{ flex: 1, alignContent: "center", justifyContent: "center" }}>
+            {posts ? <_PostList posts={posts} chat={chat} /> : <View style={{ flex: 1, alignContent: "center", justifyContent: "center" }}>
                 <ActivityIndicator size={90} color={colors.orange} />
             </View>}
 

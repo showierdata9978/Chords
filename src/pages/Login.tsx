@@ -38,17 +38,23 @@ export default function Login({ navigation }: LoginProps) {
     const client = React.useContext(ClientContext);
 
     useEffect(() => {
-        client.onLogin(() => {
+        const loginListener = () => {
             if (typeof client.user === 'undefined' || client.user === null) {
                 setError('Failed to login. Please try again.');
                 return;
             
             };
+            client.off('login', loginListener);
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'home' }],
             });
-        });
+        };
+
+        client.onLogin(loginListener);
+        return () => {
+            client.off('login', loginListener);
+        }
     });
 
     return (

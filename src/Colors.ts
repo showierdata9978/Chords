@@ -7,6 +7,7 @@ const colors = {
   foreground: '#eef',
   popup: '#333',
   foregroundOrange: '#eef',
+  foregroundGrey: '#272727'
 };
 
 export default colors;

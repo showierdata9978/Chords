@@ -5,6 +5,7 @@ import PostList from "../Lib/PostList";
 import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import colors from "../Colors";
+import Footer from "../Lib/Footer";
 
 const styles = StyleSheet.create({
     header: {
@@ -25,6 +26,7 @@ export default function Home({ navigation }: HomeProps){
     return (
         <View style={styles.container}>
             <PostList chat="home"/>
+            <Footer/>
         </View>
     )
 }
