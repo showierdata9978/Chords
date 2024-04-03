@@ -29,7 +29,7 @@ To install it you need to download the newest build from [actions](https://githu
 
 Here are some related projects
 
-[Awesome Meower](https://github.com/matiassingers/awesome-meower)
+[Awesome Meower](https://github.com/mybearworld/awesome-meower)
 
 
 ## Contributing
